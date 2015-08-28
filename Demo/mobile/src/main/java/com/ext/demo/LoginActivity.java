@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.tech.MifareClassic;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -97,7 +98,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())
+                || NfcAdapter.ACTION_TECH_DISCOVERED.equals(getIntent().getAction())
+                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction())) {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             if (rawMsgs != null) {
                 msgs = new NdefMessage[rawMsgs.length];
@@ -106,9 +109,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
 
-            for (NdefMessage ndefMessage : msgs) {
-                new NdefReaderTask().execute(ndefMessage);
-            }
+            MifareClassic mifareClassic=MifareClassic.get(null);
+            mifareClassic.
+
+            String body = new String(msgs[0].getRecords()[0].getPayload());
+            Toast.makeText(getBaseContext(), body!=null?body.replace("en",""):"Invalid Product tag",Toast.LENGTH_LONG).show();
         }
     }
 
