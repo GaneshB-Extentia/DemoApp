@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.PutDataMapRequest;
@@ -55,7 +56,10 @@ public class TestActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendNotification();
+
+                String s = ((EditText) findViewById(R.id.et)).getText().toString();
+
+                sendNotification(s);
             }
         });
     }
@@ -77,7 +81,7 @@ public class TestActivity extends Activity {
         return dateFormat.format(new Date());
     }
 
-    private void sendNotification() {
+    private void sendNotification(String s) {
         if (mGoogleApiClient.isConnected()) {
             PutDataMapRequest dataMapRequest = PutDataMapRequest.create(NOTIFICATION_PATH);
             // Make sure the data item is unique. Usually, this will not be required, as the payload
@@ -85,8 +89,8 @@ public class TestActivity extends Activity {
             // situations. However, in this example, the text and the content are always the same, so we need
             // to disambiguate the data item by adding a field that contains teh current time in milliseconds.
             dataMapRequest.getDataMap().putDouble(NOTIFICATION_TIMESTAMP, System.currentTimeMillis());
-            dataMapRequest.getDataMap().putString(NOTIFICATION_TITLE, "Hack");
-            dataMapRequest.getDataMap().putString(NOTIFICATION_CONTENT, "007");
+            dataMapRequest.getDataMap().putString(NOTIFICATION_TITLE, s);
+            dataMapRequest.getDataMap().putString(NOTIFICATION_CONTENT, s + " 007");
             PutDataRequest putDataRequest = dataMapRequest.asPutDataRequest();
             Wearable.DataApi.putDataItem(mGoogleApiClient, putDataRequest);
         } else {
